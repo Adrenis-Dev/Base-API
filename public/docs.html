@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Base APIs</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #050505;
+      color: #fff;
+    }
+
+    .layout {
+      width: min(1000px, 92%);
+      margin: auto;
+      padding: 28px 0 60px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    .back {
+      color: #fff;
+      text-decoration: none;
+      padding: 11px 15px;
+      border-radius: 14px;
+      background: #111;
+      border: 1px solid #252525;
+      font-weight: 800;
+      transition: .25s;
+    }
+
+    .back:hover {
+      background: #181818;
+      transform: translateY(-2px);
+    }
+
+    .api-card {
+      background: #0b0b0b;
+      border: 1px solid #222;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 18px 55px rgba(0, 0, 0, .45);
+    }
+
+    .api-head {
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      background: #0b0b0b;
+      color: #fff;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 14px;
+      text-align: left;
+      transition: .25s;
+    }
+
+    .api-head:hover {
+      background: #111;
+    }
+
+    .method {
+      padding: 8px 11px;
+      border-radius: 10px;
+      background: #fff;
+      color: #000;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .api-info h3 {
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .api-info code {
+      color: #aaa;
+      font-family: monospace;
+      font-size: 13px;
+      word-break: break-all;
+    }
+
+    .arrow {
+      width: 38px;
+      height: 38px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: #151515;
+      border: 1px solid #282828;
+      color: #fff;
+      font-size: 18px;
+      transition: .25s;
+    }
+
+    .api-card.active .arrow {
+      transform: rotate(180deg);
+      background: #fff;
+      color: #000;
+    }
+
+    .api-body {
+      display: none;
+      padding: 0 18px 18px;
+      border-top: 1px solid #202020;
+      background: #080808;
+    }
+
+    .api-card.active .api-body {
+      display: block;
+      animation: abrir .2s ease;
+    }
+
+    @keyframes abrir {
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .body-inner {
+      padding-top: 16px;
+    }
+
+    .url-box {
+      padding: 13px 14px;
+      border-radius: 14px;
+      background: #000;
+      border: 1px solid #242424;
+      color: #bdbdbd;
+      font-family: monospace;
+      font-size: 13px;
+      overflow-x: auto;
+      white-space: nowrap;
+      margin-bottom: 14px;
+    }
+
+    .input-area {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    input {
+      width: 100%;
+      outline: none;
+      color: #fff;
+      padding: 14px 15px;
+      border-radius: 14px;
+      background: #000;
+      border: 1px solid #292929;
+      font-weight: 700;
+      transition: .25s;
+    }
+
+    input:focus {
+      border-color: #fff;
+    }
+
+    input::placeholder {
+      color: #666;
+    }
+
+    .get-btn {
+      border: none;
+      cursor: pointer;
+      color: #000;
+      background: #fff;
+      padding: 14px 19px;
+      border-radius: 14px;
+      font-weight: 900;
+      transition: .25s;
+    }
+
+    .get-btn:hover {
+      transform: translateY(-2px);
+      background: #e7e7e7;
+    }
+
+    .result-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 14px 0 10px;
+      gap: 12px;
+    }
+
+    .result-top span {
+      color: #aaa;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+    }
+
+    .copy-btn {
+      cursor: pointer;
+      border: 1px solid #292929;
+      color: #fff;
+      background: #111;
+      padding: 8px 11px;
+      border-radius: 11px;
+      font-weight: 800;
+      transition: .25s;
+    }
+
+    .copy-btn:hover {
+      background: #181818;
+    }
+
+    pre {
+      width: 100%;
+      min-height: 260px;
+      max-height: 520px;
+      overflow: auto;
+      padding: 16px;
+      border-radius: 16px;
+      background: #000;
+      border: 1px solid #242424;
+      color: #fff;
+      font-family: monospace;
+      font-size: 13px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    footer {
+      margin-top: 28px;
+      text-align: center;
+      color: #777;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 560px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+      }
+
+      .api-head {
+        padding: 16px;
+        gap: 10px;
+      }
+
+      .api-info h3 {
+        font-size: 16px;
+      }
+
+      .input-area {
+        grid-template-columns: 1fr;
+      }
+
+      .get-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+
+    <header>
+      <div class="logo">Base APIs</div>
+      <a class="back" href="/">Voltar</a>
+    </header>
+
+    <main>
+
+      <section class="api-card">
+        <button class="api-head" onclick="toggleCard(this)">
+          <span class="method">GET</span>
+
+          <span class="api-info">
+            <h3>YouTube Play</h3>
+            <code>/api/youtube-play?q=</code>
+          </span>
+
+          <span class="arrow">⌄</span>
+        </button>
+
+        <div class="api-body">
+          <div class="body-inner">
+
+            <div class="url-box">
+              /api/youtube-play?q=
+            </div>
+
+            <div class="input-area">
+              <input
+                id="youtube_play_q"
+                type="text"
+                placeholder="Digite o nome da música"
+                autocomplete="off"
+              >
+
+              <button
+                class="get-btn"
+                onclick="runYoutube(event)"
+              >
+                GET
+              </button>
+            </div>
+
+            <div class="result-top">
+              <span>Resultado JSON</span>
+
+              <button
+                class="copy-btn"
+                onclick="copyResult()"
+              >
+                Copiar
+              </button>
+            </div>
+
+            <pre id="youtube_result">{}</pre>
+
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer>
+      Base APIs © Dylan Modz
+    </footer>
+
+  </div>
+
+  <script>
+    function toggleCard(btn) {
+      const card = btn.closest('.api-card')
+      card.classList.toggle('active')
+    }
+
+    async function runYoutube(event) {
+      event.stopPropagation()
+
+      const input = document.getElementById('youtube_play_q')
+      const painel = document.getElementById('youtube_result')
+      const q = input.value.trim()
+
+      if (!q) {
+        painel.textContent = JSON.stringify({
+          status: false,
+          criador: 'Dylan Modz',
+          resultado: 'Parâmetro q obrigatório.'
+        }, null, 2)
+
+        return
+      }
+
+      const rota = '/api/youtube-play?q=' + encodeURIComponent(q)
+
+      painel.textContent = 'Carregando...'
+
+      try {
+        const resposta = await fetch(rota)
+        const contentType = resposta.headers.get('content-type') || ''
+
+        if (!contentType.includes('application/json')) {
+          const texto = await resposta.text()
+
+          painel.textContent = JSON.stringify({
+            status: false,
+            criador: 'Dylan Modz',
+            resultado: 'A rota retornou um formato inválido.',
+            detalhe: texto
+          }, null, 2)
+
+          return
+        }
+
+        const data = await resposta.json()
+
+        painel.textContent = JSON.stringify(data, null, 2)
+
+      } catch (e) {
+        painel.textContent = JSON.stringify({
+          status: false,
+          criador: 'Dylan Modz',
+          resultado: 'Erro ao consultar YouTube Play.',
+          detalhe: e.message
+        }, null, 2)
+      }
+    }
+
+    async function copyResult() {
+      const painel = document.getElementById('youtube_result')
+      const texto = painel.textContent || ''
+
+      try {
+        await navigator.clipboard.writeText(texto)
+      } catch {}
+    }
+
+    document
+      .getElementById('youtube_play_q')
+      .addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+          runYoutube(event)
+        }
+      })
+  </script>
+</body>
+</html>
